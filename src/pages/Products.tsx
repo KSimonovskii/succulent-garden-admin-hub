@@ -1,8 +1,9 @@
 
 import { useState } from "react";
-import { Search, Plus, Edit, Trash2, Filter } from "lucide-react";
+import { Search, Edit, Trash2, Filter } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import AddProductDialog from "@/components/admin/AddProductDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,7 @@ interface Product {
   status: "active" | "inactive";
 }
 
-const products: Product[] = [
+const initialProducts: Product[] = [
   { id: "1", name: "Echeveria Elegans", price: "$12.99", stock: 25, image: "🌹", category: "Echeveria", description: "Beautiful rosette succulent", status: "active" },
   { id: "2", name: "Jade Plant", price: "$18.50", stock: 15, image: "🌿", category: "Crassula", description: "Classic jade plant", status: "active" },
   { id: "3", name: "Barrel Cactus", price: "$22.75", stock: 8, image: "🌵", category: "Cactus", description: "Desert barrel cactus", status: "active" },
@@ -32,6 +33,7 @@ const products: Product[] = [
 ];
 
 const Products = () => {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -47,6 +49,10 @@ const Products = () => {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  const handleProductAdded = (newProduct: Product) => {
+    setProducts(prev => [...prev, newProduct]);
+  };
+
   return (
     <div className="min-h-screen bg-succulent-cream flex">
       <AdminSidebar />
@@ -61,10 +67,7 @@ const Products = () => {
               <h1 className="text-3xl font-bold text-succulent-dark">Products</h1>
               <p className="text-muted-foreground">Manage your succulent inventory</p>
             </div>
-            <Button className="bg-succulent-orange hover:bg-succulent-orange/80 text-succulent-cream">
-              <Plus className="h-4 w-4 mr-2" />
-              Add New Product
-            </Button>
+            <AddProductDialog onProductAdded={handleProductAdded} />
           </div>
 
           {/* Filters Section */}
