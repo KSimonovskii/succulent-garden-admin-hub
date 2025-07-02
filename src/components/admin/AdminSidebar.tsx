@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { 
   Home, 
   Package, 
@@ -16,20 +17,21 @@ import { Button } from "@/components/ui/button";
 interface NavItem {
   icon: React.ElementType;
   label: string;
-  isActive?: boolean;
+  href: string;
 }
 
 const navItems: NavItem[] = [
-  { icon: Home, label: "Dashboard", isActive: true },
-  { icon: Package, label: "Products" },
-  { icon: ShoppingCart, label: "Orders" },
-  { icon: Users, label: "Customers" },
-  { icon: BarChart3, label: "Analytics" },
-  { icon: Settings, label: "Settings" },
+  { icon: Home, label: "Dashboard", href: "/" },
+  { icon: Package, label: "Products", href: "/products" },
+  { icon: ShoppingCart, label: "Orders", href: "/orders" },
+  { icon: Users, label: "Customers", href: "/customers" },
+  { icon: BarChart3, label: "Analytics", href: "/analytics" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
 const AdminSidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const location = useLocation();
 
   return (
     <aside className={cn(
@@ -56,19 +58,25 @@ const AdminSidebar = () => {
       
       <nav className="flex-1 px-4">
         <ul className="space-y-2">
-          {navItems.map((item, index) => (
-            <li key={index}>
-              <button className={cn(
-                "w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors",
-                item.isActive 
-                  ? "bg-succulent-orange text-succulent-cream" 
-                  : "text-succulent-mint hover:bg-succulent-mint/10 hover:text-succulent-cream"
-              )}>
-                <item.icon className="h-5 w-5 flex-shrink-0" />
-                {!isCollapsed && <span className="font-medium">{item.label}</span>}
-              </button>
-            </li>
-          ))}
+          {navItems.map((item, index) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <li key={index}>
+                <Link
+                  to={item.href}
+                  className={cn(
+                    "w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors",
+                    isActive 
+                      ? "bg-succulent-orange text-succulent-cream" 
+                      : "text-succulent-mint hover:bg-succulent-mint/10 hover:text-succulent-cream"
+                  )}
+                >
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {!isCollapsed && <span className="font-medium">{item.label}</span>}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </aside>
